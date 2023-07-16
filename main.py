@@ -19,5 +19,5 @@ async def sample():
 
 
 @app.get("/query-param")
-async def query_param(param1: str, param2: int):
+async def query_param(param1: str = 'default param', param2: int = 1):
     return {"message": f"param1 : {param1}, param2 : {param2}"}
