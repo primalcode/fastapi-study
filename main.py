@@ -16,3 +16,8 @@ async def say_hello(name: str):
 @app.get("/sample")
 async def sample():
     return {"sample"}
+
+
+@app.get("/query-param")
+async def query_param(param1: str, param2: int):
+    return {"message": f"param1 : {param1}, param2 : {param2}"}
