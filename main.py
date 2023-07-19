@@ -1,6 +1,7 @@
 from typing import Optional, List
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
+from sqlmodel import Field, SQLModel
 
 app = FastAPI()
 
