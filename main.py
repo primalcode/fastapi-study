@@ -1,9 +1,17 @@
 from typing import Optional, List
+
 from fastapi import FastAPI
-from pydantic import BaseModel, Field
-from sqlmodel import Field, SQLModel
+from pydantic import BaseModel
+from sqlmodel import Field, SQLModel, create_engine, Session, select
 
 app = FastAPI()
+
+
+class Hero(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str
+    secret_name: str
+    age: Optional[int] = None
 
 
 class ShopInfo(BaseModel):
@@ -28,7 +36,18 @@ async def query_param(param1: Optional[str] = None, param2: int = 1):
     return {"message": f"param1 : {param1}, param2 : {param2}"}
 # 単純にparam1を返却するとnull，上記のように返却するとNoneとなる
 
+# localhostと書くと繋がらない
+engine = create_engine('mysql://yoshima:yoshima@127.0.0.1:3306/study_fastapi_db')
+
 
 @app.post("/")
 async def index(data: Data):
     return {"data": data}
+
+
+@app.get("/heroes")
+async def get_heroes():
+    with Session(engine) as session:
+        stmt = select(Hero)
+        results = session.exec(stmt)
+    return {"results": results}
