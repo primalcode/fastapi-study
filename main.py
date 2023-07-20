@@ -58,5 +58,6 @@ async def create_hero(hero: Hero):
     with Session(engine) as session:
         session.add(hero)
         session.commit()
+        # TODO 最新状態を取得するメソッド，create時に必要か確認する
         session.refresh(hero)
     return {"success"}
