@@ -1,7 +1,6 @@
 from typing import Optional, List
 
 from fastapi import FastAPI
-from pydantic import BaseModel
 from sqlmodel import Field, SQLModel, create_engine, Session, select
 
 app = FastAPI()
@@ -14,43 +13,24 @@ class Hero(SQLModel, table=True):
     age: Optional[int] = None
 
 
-class ShopInfo(BaseModel):
-    name: str
-    location: str
-
-
-class Item(BaseModel):
-    name: str = Field(min_length=4, max_length=12)
-    description: Optional[str] = None
-    price: int
-    tax: Optional[float] = None
-
-
-class Data(BaseModel):
-    shop_info: Optional[ShopInfo]
-    items: List[Item]
-
-
-@app.get("/query-param")
-async def query_param(param1: Optional[str] = None, param2: int = 1):
-    return {"message": f"param1 : {param1}, param2 : {param2}"}
-# 単純にparam1を返却するとnull，上記のように返却するとNoneとなる
-
 # localhostと書くと繋がらない
 engine = create_engine('mysql://yoshima:yoshima@127.0.0.1:3306/study_fastapi_db')
 
 
-@app.post("/")
-async def index(data: Data):
-    return {"data": data}
-
-
-@app.get("/heroes")
+@app.get("/heroes/", response_model=List[Hero])
 async def get_heroes():
     with Session(engine) as session:
         stmt = select(Hero)
-        results = session.exec(stmt)
-    return {"results": results}
+        heroes = session.exec(stmt).all()
+        return heroes
+
+
+@app.get("/hero/{hero_id}", response_model=Hero)
+async def get_hero_by_id(hero_id: int):
+    with Session(engine) as session:
+        stmt = select(Hero).where(Hero.id == hero_id)
+        results = session.exec(stmt).one()
+    return results
 
 
 @app.post("/hero")
