@@ -56,8 +56,17 @@ async def get_heroes():
 @app.post("/hero")
 async def create_hero(hero: Hero):
     with Session(engine) as session:
+        print(f"追加前ID：{hero.id}")
         session.add(hero)
+        print(f"追加後ID：{hero.id}")
+
+        print(f"コミット前ID：{hero.id}")
         session.commit()
-        # TODO 最新状態を取得するメソッド，create時に必要か確認する
+        print(f"コミット後ID：{hero.id}")
+
+        # コミット後でIDは最新の状態になっているので，不要な気がする．．．
+        print(f"反映前ID：{hero.id}")
         session.refresh(hero)
+        print(f"反映後ID：{hero.id}")
+
     return {"success"}
