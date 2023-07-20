@@ -51,3 +51,12 @@ async def get_heroes():
         stmt = select(Hero)
         results = session.exec(stmt)
     return {"results": results}
+
+
+@app.post("/hero")
+async def create_hero(hero: Hero):
+    with Session(engine) as session:
+        session.add(hero)
+        session.commit()
+        session.refresh(hero)
+    return {"success"}
