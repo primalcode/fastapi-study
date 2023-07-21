@@ -33,6 +33,17 @@ async def get_hero_by_id(hero_id: int):
     return results
 
 
+@app.put("/hero/{hero_id}")
+async def update_hero(hero_id: int):
+    with Session(engine) as session:
+        stmt = select(Hero).where(Hero.id == hero_id)
+        result = session.exec(stmt).one()
+        result.name = "updated name"
+        session.add(result)
+        session.commit()
+        session.refresh(result)
+
+
 @app.post("/hero")
 async def create_hero(hero: Hero):
     with Session(engine) as session:
