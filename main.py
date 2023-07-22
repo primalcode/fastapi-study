@@ -1,7 +1,7 @@
 from typing import Optional, List
 
 from fastapi import FastAPI
-from sqlmodel import Field, SQLModel, create_engine, Session, select
+from sqlmodel import Field, SQLModel, create_engine, Session, select, update
 
 app = FastAPI()
 
@@ -25,7 +25,7 @@ async def get_heroes():
         return heroes
 
 
-@app.get("/hero/{hero_id}", response_model=Hero)
+@app.get("/heroes/{hero_id}", response_model=Hero)
 async def get_hero_by_id(hero_id: int):
     with Session(engine) as session:
         stmt = select(Hero).where(Hero.id == hero_id)
@@ -33,7 +33,7 @@ async def get_hero_by_id(hero_id: int):
     return results
 
 
-@app.put("/hero/{hero_id}")
+@app.put("/heroes/{hero_id}")
 async def update_hero(hero_id: int):
     with Session(engine) as session:
         stmt = select(Hero).where(Hero.id == hero_id)
@@ -44,7 +44,7 @@ async def update_hero(hero_id: int):
         session.refresh(result)
 
 
-@app.post("/hero")
+@app.post("/heroes")
 async def create_hero(hero: Hero):
     with Session(engine) as session:
         print(f"追加前ID：{hero.id}")
@@ -61,3 +61,19 @@ async def create_hero(hero: Hero):
         print(f"反映後ID：{hero.id}")
 
     return {"success"}
+
+
+@app.put("/heroes")
+async def bulk_update():
+    with Session(engine) as session:
+        heroes = session.query(Hero).filter(Hero.name == "yoshima").all()
+
+        session.execute(
+            update(Hero).where(Hero.name == "yoshima").values(age=45)
+        )
+        session.commit()
+
+        for hero in heroes:
+            session.refresh(hero)
+    return {"success"}
+
