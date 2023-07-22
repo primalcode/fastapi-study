@@ -77,3 +77,14 @@ async def bulk_update():
             session.refresh(hero)
     return {"success"}
 
+
+@app.delete("/heroes/{hero_id}")
+async def delete(hero_id:int):
+    with Session(engine) as session:
+        statement = select(Hero).where(Hero.id == hero_id)
+        result = session.exec(statement).one()
+
+        session.delete(result)
+        session.commit()
+    return {"deleted"}
+
