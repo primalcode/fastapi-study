@@ -1,18 +1,14 @@
+from typing import List
+
 from fastapi import APIRouter
-from sqlmodel import Field, SQLModel, create_engine, Session, select, update
-from typing import Optional, List
+from sqlmodel import create_engine, Session, select, update
+
+from ..models.heroes import Hero
 
 router = APIRouter()
 
 # localhostと書くと繋がらない
 engine = create_engine('mysql://yoshima:yoshima@127.0.0.1:3306/study_fastapi_db')
-
-
-class Hero(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    name: str
-    secret_name: str
-    age: Optional[int] = None
 
 
 @router.get("/", response_model=List[Hero])
