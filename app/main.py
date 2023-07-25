@@ -1,5 +1,5 @@
 from authlib.integrations.starlette_client import OAuthError
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from starlette.requests import Request
 from starlette.responses import RedirectResponse
 from starlette.middleware.sessions import SessionMiddleware
@@ -11,6 +11,15 @@ app = FastAPI()
 app.include_router(api_router)
 
 app.add_middleware(SessionMiddleware, secret_key="your-secret-key")
+
+
+@app.get("/auth/login/google/authorized", name="authorize_google")
+async def authorize(request: Request, token: str = Depends(oauth.google.authorize_access_token)):
+    user_info = await oauth.google.parse_id_token(token)
+    # ここで user_info を使用してユーザーを認証し、その情報をセッションに保存します。
+
+    # 認証に成功したら、ユーザーを /heroes/ にリダイレクトします。
+    return RedirectResponse(url=request.app.url_path_for("list_heroes"))
 
 
 @app.get("/auth", name="auth")
