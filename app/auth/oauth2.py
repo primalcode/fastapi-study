@@ -4,6 +4,11 @@ from fastapi.security import OAuth2AuthorizationCodeBearer
 from jose import jwt
 from starlette.config import Config
 
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+
+
 config = Config('.env')
 
 oauth = OAuth(config)
@@ -15,6 +20,7 @@ oauth.register(
     authorize_url='https://accounts.google.com/o/oauth2/auth',
     api_base_url='https://www.googleapis.com/oauth2/v1/',
     client_kwargs={'scope': 'openid email profile'},
+    server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
 )
 
 
