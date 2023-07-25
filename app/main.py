@@ -13,7 +13,7 @@ app.include_router(api_router)
 app.add_middleware(SessionMiddleware, secret_key="your-secret-key")
 
 
-@app.get("/auth/login/google/authorized", name="authorize_google")
+@app.get("/auth/login/google/authorized", name="authorize")
 async def authorize(request: Request, token: str = Depends(oauth.google.authorize_access_token)):
     user_info = await oauth.google.parse_id_token(token)
     # ここで user_info を使用してユーザーを認証し、その情報をセッションに保存します。
@@ -41,5 +41,5 @@ async def read_auth(request: Request, code: str = ""):
 
 @app.get("/login")
 async def login(request: Request):
-    redirect_uri = request.url_for('auth')
+    redirect_uri = request.url_for('authorize')
     return await oauth.google.authorize_redirect(request, redirect_uri)
