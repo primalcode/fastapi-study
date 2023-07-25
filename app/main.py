@@ -2,12 +2,15 @@ from authlib.integrations.starlette_client import OAuthError
 from fastapi import FastAPI, HTTPException
 from starlette.requests import Request
 from starlette.responses import RedirectResponse
+from starlette.middleware.sessions import SessionMiddleware
 
 from app.auth.oauth2 import oauth
 from .api import api_router
 
 app = FastAPI()
 app.include_router(api_router)
+
+app.add_middleware(SessionMiddleware, secret_key="your-secret-key")
 
 
 @app.get("/auth", name="auth")
