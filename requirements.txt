@@ -2,3 +2,10 @@ fastapi==0.100.0
 pydantic~=1.10.11
 sqlmodel~=0.0.8
 httpx
+python-jose[cryptography]
+python-multipart
+passlib[bcrypt]
+python-dotenv
+authlib~=1.2.1
+starlette~=0.27.0
+requests>=2.25.1
