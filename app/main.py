@@ -13,7 +13,7 @@ app.include_router(api_router)
 @app.get("/auth", name="auth")
 async def read_auth(request: Request, code: str = ""):
     try:
-        token = await oauth.googole.authorize_access_token(request)
+        token = await oauth.google.authorize_access_token(request)
     except OAuthError as e:
         raise HTTPException(
             status_code=400,
@@ -24,7 +24,7 @@ async def read_auth(request: Request, code: str = ""):
 
     request.session["user"] = dict(user)
 
-    return RedirectResponse(uri=request.app.url_path_for("index"))
+    return RedirectResponse(uri=request.app.url_path_for("list_heroes"))
 
 
 @app.get("/login")

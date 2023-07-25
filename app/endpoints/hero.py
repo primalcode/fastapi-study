@@ -10,7 +10,7 @@ from app.auth.oauth2 import oauth2_scheme
 router = APIRouter()
 
 
-@router.get("/", response_model=List[Hero])
+@router.get("/", name="list_heroes", response_model=List[Hero])
 async def get_heroes(token: str = Depends(oauth2_scheme)):
     return hero_service.get_all_hero()
 
